@@ -1,20 +1,14 @@
 apply plugin: "com.android.library"
 apply plugin: "com.github.dcendents.android-maven"
-apply plugin: "com.jfrog.bintray"
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
 
+def packageName = 'cc.cloudist.acplibrary'
+def libraryVersion = '1.2.2'
 version = "1.2.2"
 
 repositories {
-    mavenLocal()
     jcenter()
-    maven {
-        name 'utui-repo'
-        url "http://repo.utui.me/maven"
-        credentials {
-            username = mavenUser
-            password = mavenPassword
-        }
-    }
 }
 
 android {
@@ -93,6 +87,42 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives javadocJar
     archives sourcesJar
+}
+
+publishing {
+    publications {
+        aar(MavenPublication) {
+            groupId packageName
+            version = libraryVersion
+            artifactId project.getName()
+
+            // Tell maven to prepare the generated "* .aar" file for publishing
+            artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+        }
+    }
+}
+
+artifactory {
+    contextUrl = 'http://repo.utui.me'
+    publish {
+        repository {
+            // The Artifactory repository key to publish to
+            repoKey = 'utui-releases'
+
+            username = repoUser
+            password = repoPassword
+        }
+        defaults {
+            // Tell the Artifactory Plugin which artifacts should be published to Artifactory.
+            publications('aar')
+            publishArtifacts = true
+
+            // Properties to be attached to the published artifacts.
+            // properties = ['qa.level': 'basic', 'dev.team': 'core']
+            // Publish generated POM files to Artifactory (true by default)
+            publishPom = true
+        }
+    }
 }
 
 //Properties properties = new Properties()
