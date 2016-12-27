@@ -39,8 +39,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-def siteUrl = 'https://github.com/Cloudist/ACProgressLite'
-def gitUrl = 'https://github.com/Cloudist/ACProgressLite.git'
+def siteUrl = 'https://github.com/hanshihai/ACProgressLite'
+def gitUrl = 'https://github.com/hanshihai/ACProgressLite.git'
 group = "cc.cloudist.acplibrary"
 install {
     repositories.mavenInstaller {
