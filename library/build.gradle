@@ -98,6 +98,20 @@ publishing {
 
             // Tell maven to prepare the generated "* .aar" file for publishing
             artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+
+            //The publication doesn't know about our dependencies, so we have to manually add them to the pom
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+
+                //Iterate over the compile dependencies (we don't want the test ones), adding a <dependency> node for each
+                configurations.compile.allDependencies.each {
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', 'com.android.support')
+                    dependencyNode.appendNode('artifactId', 'appcompat-v7')
+                    dependencyNode.appendNode('version', '22.0.0')
+                    dependencyNode.appendNode('scope', 'compile')
+                }
+            }
         }
     }
 }
